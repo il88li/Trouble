@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}لوحة التحكم{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="mb-4"><i class="bi bi-speedometer2"></i> لوحة التحكم</h2>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-robot"></i> البوتات</h5>
+                <h2>{{ total_bots }}</h2>
+                <small>بوت نشط</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-people"></i> المجموعات</h5>
+                <h2>{{ total_groups }}</h2>
+                <small>مجموعة مفعلة</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-person"></i> المستخدمين</h5>
+                <h2>{{ total_users }}</h2>
+                <small>مستخدم تم جمعه</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-envelope"></i> الرسائل</h5>
+                <h2>{{ total_messages }}</h2>
+                <small>رسالة مرسلة</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-robot"></i> البوتات النشطة</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>الاسم</th>
+                                <th>التوكن</th>
+                                <th>الرسائل</th>
+                                <th>المستخدمين</th>
+                                <th>الحالة</th>
+                                <th>التحكم</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for bot in bot_stats %}
+                            <tr>
+                                <td>{{ bot.id }}</td>
+                                <td>{{ bot.name }}</td>
+                                <td><code>{{ bot.token }}</code></td>
+                                <td>{{ bot.messages }}</td>
+                                <td>{{ bot.users }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if bot.is_active else 'danger' }}">
+                                        {{ 'نشط' if bot.is_active else 'متوقف' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-{{ 'warning' if bot.is_active else 'success' }} toggle-bot" data-bot-id="{{ bot.id }}">
+                                        <i class="bi bi-{{ 'pause' if bot.is_active else 'play' }}"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-clock"></i> آخر النشاطات</h5>
+            </div>
+            <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                {% for log in recent_logs %}
+                <div class="border-bottom mb-2 pb-2">
+                    <small class="text-muted">{{ log.sent_at.strftime('%H:%M:%S') }}</small>
+                    <p class="mb-1 small">
+                        <span class="badge bg-{{ 'success' if log.status == 'sent' else 'danger' }}">
+                            {{ '✅' if log.status == 'sent' else '❌' }}
+                        </span>
+                        إلى: {{ log.user_id }}
+                        <br>
+                        <span class="text-muted">{{ log.message_text[:50] }}{% if log.message_text|length > 50 %}...{% endif %}</span>
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    $('.toggle-bot').on('click', function() {
+        const botId = $(this).data('bot-id');
+        const btn = $(this);
+        
+        $.get(`/api/bot/${botId}/toggle`, function(data) {
+            if (data.status === 'success') {
+                location.reload();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
