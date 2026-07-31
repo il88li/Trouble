@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: telegram-bot-manager
+    runtime: python
+    repo: https://github.com/il88li/Trouble
+    plan: free
+    region: oregon
+    buildCommand: |
+      pip install -r requirements.txt
+      python -c "from app import app, db; with app.app_context(): db.create_all()"
+    startCommand: gunicorn -w 2 -b 0.0.0.0:$PORT app:app
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:///instance/bot_manager.db
+      - key: FLASK_ENV
+        value: production
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        value: admin123
+    healthCheckPath: /dashboard
+    autoDeploy: true
