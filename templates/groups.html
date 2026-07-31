@@ -14,4 +14,96 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-header">
-                <h5><
+                <h5><i class="bi bi-plus-circle"></i> إضافة {{ 'بوت' if section == 'bots' else 'مجموعة' }}</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    {% if section == 'bots' %}
+                        <div class="mb-3">
+                            {{ form.name.label(class="form-label") }}
+                            {{ form.name(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.token.label(class="form-label") }}
+                            {{ form.token(class="form-control") }}
+                            <small class="text-muted">توكن البوت من @BotFather</small>
+                        </div>
+                    {% else %}
+                        <div class="mb-3">
+                            {{ form.group_id.label(class="form-label") }}
+                            {{ form.group_id(class="form-control") }}
+                            <small class="text-muted">مثل: -1001234567890</small>
+                        </div>
+                        <div class="mb-3">
+                            {{ form.title.label(class="form-label") }}
+                            {{ form.title(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.bot_id.label(class="form-label") }}
+                            {{ form.bot_id(class="form-control") }}
+                        </div>
+                    {% endif %}
+                    
+                    {{ form.submit(class="btn btn-primary w-100") }}
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-list"></i> قائمة {{ 'البوتات' if section == 'bots' else 'المجموعات' }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>{{ 'الاسم' if section == 'bots' else 'المجموعة' }}</th>
+                                <th>{{ 'التوكن' if section == 'bots' else 'المعرف' }}</th>
+                                <th>الحالة</th>
+                                <th>تاريخ الإضافة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if section == 'bots' %}
+                                {% for bot in bots %}
+                                <tr>
+                                    <td>{{ bot.id }}</td>
+                                    <td>{{ bot.name or 'غير مسمى' }}</td>
+                                    <td><code>{{ bot.token[:15] }}...</code></td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if bot.is_active else 'danger' }}">
+                                            {{ 'نشط' if bot.is_active else 'متوقف' }}
+                                        </span>
+                                    </td>
+                                    <td>{{ bot.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                {% for group in groups %}
+                                <tr>
+                                    <td>{{ group.id }}</td>
+                                    <td>{{ group.title or 'غير مسمى' }}</td>
+                                    <td><code>{{ group.group_id }}</code></td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if group.is_active else 'danger' }}">
+                                            {{ 'نشط' if group.is_active else 'متوقف' }}
+                                        </span>
+                                    </td>
+                                    <td>{{ group.added_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                </tr>
+                                {% endfor %}
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
