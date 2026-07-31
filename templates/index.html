@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}الرئيسية{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 text-center py-5">
+        <h1><i class="bi bi-robot text-primary"></i> مدير بوتات تيليجرام</h1>
+        <p class="lead">أداة متكاملة لإدارة بوتات تيليجرام وإرسال الرسائل التلقائية</p>
+        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg mt-3">
+            <i class="bi bi-box-arrow-in-right"></i> تسجيل الدخول
+        </a>
+    </div>
+</div>
+{% endblock %}
