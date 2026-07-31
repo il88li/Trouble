@@ -7,6 +7,5 @@ python-telegram-bot==20.7
 requests==2.31.0
 python-dotenv==1.0.0
 APScheduler==3.10.4
-pandas==2.1.4
-plotly==5.18.0
 gunicorn==21.2.0
+# pandas و plotly محذوفان تماماً
